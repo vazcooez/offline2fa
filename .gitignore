@@ -1,0 +1,8 @@
+build/
+dist/
+release/
+data/
+*.dat
+*.dat.bak
+*.vault
+settings.json
