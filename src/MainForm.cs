@@ -546,12 +546,12 @@ namespace Offline2FA
         {
             foreach (ToolStripMenuItem item in trayCodeItems)
             {
+                // Codes are never shown in the tray; only the time left before the current code changes.
                 var account = (Account)item.Tag;
-                string code = CodeFor(account, now);
                 int period = account.SafePeriod;
-                item.ShortcutKeyDisplayString = code == null
+                item.ShortcutKeyDisplayString = CodeFor(account, now) == null
                     ? "invalid key"
-                    : Totp.Format(code) + "   " + (period - now % period) + "s";
+                    : (period - now % period) + "s left";
             }
         }
 

@@ -6,7 +6,7 @@ namespace Offline2FA
     static class AppVersion
     {
         // Single source of truth for the version; build.ps1 reads it to name the release file.
-        public const string Number = "1.1.0";
+        public const string Number = "1.1.1";
 
         public static string Display
         {
@@ -34,13 +34,22 @@ namespace Offline2FA
         {
             new ReleaseNote
             {
+                Version = "1.1.1",
+                Date = "2026-09-14",
+                Changes = new[]
+                {
+                    "The tray menu no longer shows codes. It shows each account with the time left, and clicking an account still copies its code."
+                }
+            },
+            new ReleaseNote
+            {
                 Version = "1.1.0",
                 Date = "2026-09-14",
                 Changes = new[]
                 {
                     "Choose where the vault file is stored during setup, open an existing vault file, or move it later (More → Move vault file…).",
                     "Closing the window keeps the app running in the notification area. Use Exit in the tray menu to quit.",
-                    "The tray menu lists your accounts with their current codes. Click one to copy its code without opening the window.",
+                    "The tray menu lists your accounts. Click one to copy its code without opening the window.",
                     "Adding an account only needs the secret key. The name is optional, and digits, period and algorithm are under Advanced options.",
                     "This \"What's new\" window, shown once after each update.",
                     "Fixed: the countdown timer overlapped the code."
