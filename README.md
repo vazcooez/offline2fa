@@ -2,6 +2,8 @@
 
 A small Windows desktop app that generates two-factor authentication codes (TOTP) completely offline.
 
+Published by **Vazcooez LLC**.
+
 - Add as many accounts as you like. Paste the secret key the website gives you; a name is optional.
 - Secret keys are never shown after they are saved. Only the current codes are displayed.
 - On first launch you create a master password. It encrypts everything, and it is required each time the app opens.

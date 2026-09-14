@@ -7,6 +7,8 @@ using Offline2FA;
 [assembly: AssemblyTitle("Offline 2FA")]
 [assembly: AssemblyDescription("Offline two-factor authentication code generator")]
 [assembly: AssemblyProduct("Offline 2FA")]
+[assembly: AssemblyCompany(AppVersion.Publisher)]
+[assembly: AssemblyCopyright(AppVersion.Copyright)]
 [assembly: AssemblyVersion(AppVersion.Number)]
 [assembly: AssemblyFileVersion(AppVersion.Number)]
 [assembly: AssemblyInformationalVersion(AppVersion.Number)]

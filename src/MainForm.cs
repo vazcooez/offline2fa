@@ -904,7 +904,8 @@ namespace Offline2FA
         void ShowAbout()
         {
             ShowMessage(
-                Ui.AppName + " " + AppVersion.Display + "\r\n\r\n" +
+                Ui.AppName + " " + AppVersion.Display + "\r\n" +
+                "Published by " + AppVersion.Publisher + "\r\n" + AppVersion.Copyright + "\r\n\r\n" +
                 "Generates time-based one-time passwords (TOTP) entirely offline.\r\n\r\n" +
                 "Secret keys are encrypted with AES-256 using a key derived from your master password " +
                 "(PBKDF2-SHA256, " + Vault.DefaultIterations.ToString("N0", CultureInfo.InvariantCulture) + " iterations). " +

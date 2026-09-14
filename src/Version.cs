@@ -6,7 +6,9 @@ namespace Offline2FA
     static class AppVersion
     {
         // Single source of truth for the version; build.ps1 reads it to name the release file.
-        public const string Number = "1.1.1";
+        public const string Number = "1.1.2";
+        public const string Publisher = "Vazcooez LLC";
+        public const string Copyright = "Copyright © 2026 Vazcooez LLC";
 
         public static string Display
         {
@@ -32,6 +34,15 @@ namespace Offline2FA
         // Newest first. Add an entry here (and bump AppVersion.Number) for every release.
         public static readonly ReleaseNote[] All =
         {
+            new ReleaseNote
+            {
+                Version = "1.1.2",
+                Date = "2026-09-14",
+                Changes = new[]
+                {
+                    "Offline 2FA is now published by Vazcooez LLC (shown in the file properties, About and this window)."
+                }
+            },
             new ReleaseNote
             {
                 Version = "1.1.1",

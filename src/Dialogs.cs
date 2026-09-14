@@ -404,7 +404,8 @@ namespace Offline2FA
         public WhatsNewForm(List<ReleaseNote> notes) : base("What's new – " + Ui.AppName, 480)
         {
             ShowIcon = true;
-            AddHeading(Ui.AppName + " " + AppVersion.Display);
+            AddHeading(Ui.AppName + " " + AppVersion.Display).Margin = Padding.Empty;
+            AddText("by " + AppVersion.Publisher, true).Font = Ui.SmallFont;
 
             int textWidth = ContentWidth - SystemInformation.VerticalScrollBarWidth - Ui.Px(8);
             var scroll = new FlowLayoutPanel
