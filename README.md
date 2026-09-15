@@ -5,7 +5,7 @@ A small Windows desktop app that generates two-factor authentication codes (TOTP
 Published by **Vazcooez LLC**.
 
 - Add as many accounts as you like. Paste the secret key the website gives you; a name is optional.
-- Secret keys are never shown after they are saved. Only the current codes are displayed.
+- Secret keys are never shown after they are saved. Codes are masked except for the last digit (`••• ••6`); copying a code shows it in full for 10 seconds.
 - On first launch you create a master password. It encrypts everything, and it is required each time the app opens.
 - You choose where the vault file is stored, and you can move it later.
 - **Remove** only hides an account. Nothing is ever deleted, and hidden accounts can be restored from **Removed**.
@@ -19,7 +19,7 @@ Get `Offline2FA-vX.Y.Z.exe` from the [Releases](https://github.com/vazcooez/offl
 
 ## Use
 
-Click a code (or **Copy**) to copy it. The clipboard is cleared after 30 seconds, and codes are kept out of Windows clipboard history.
+Click a code (or **Copy**) to copy it and reveal it for 10 seconds. The clipboard is cleared after 30 seconds, and codes are kept out of Windows clipboard history.
 
 | Shortcut | Action |
 |---|---|

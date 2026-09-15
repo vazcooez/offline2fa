@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Offline2FA
@@ -6,7 +6,7 @@ namespace Offline2FA
     static class AppVersion
     {
         // Single source of truth for the version; build.ps1 reads it to name the release file.
-        public const string Number = "1.1.2";
+        public const string Number = "1.1.3";
         public const string Publisher = "Vazcooez LLC";
         public const string Copyright = "Copyright © 2026 Vazcooez LLC";
 
@@ -34,6 +34,16 @@ namespace Offline2FA
         // Newest first. Add an entry here (and bump AppVersion.Number) for every release.
         public static readonly ReleaseNote[] All =
         {
+            new ReleaseNote
+            {
+                Version = "1.1.3",
+                Date = "2026-09-14",
+                Changes = new[]
+                {
+                    "Codes in the main window are masked, showing only the last digit (for example ••• ••6).",
+                    "Clicking a code or Copy copies it and shows the full code for 10 seconds."
+                }
+            },
             new ReleaseNote
             {
                 Version = "1.1.2",
@@ -80,7 +90,7 @@ namespace Offline2FA
         public const string AboutText =
             "Offline 2FA generates the sign-in codes used for two-factor authentication (the same codes an authenticator app on your phone shows) without any internet connection.\r\n\r\n" +
             "•  Add account: paste the secret key a website gives you when you turn on two-factor authentication. A name is optional.\r\n" +
-            "•  Click a code, or Copy, and paste it into the website. Codes refresh every 30 seconds, and the clipboard is cleared after 30 seconds.\r\n" +
+            "•  Codes are masked except for the last digit. Click a code, or Copy, to copy it and see it in full for 10 seconds, then paste it into the website. Codes refresh every 30 seconds, and the clipboard is cleared after 30 seconds.\r\n" +
             "•  Remove hides an account from the list without deleting it. Restore it at any time from Removed.\r\n" +
             "•  History lists everything that happened, with timestamps.\r\n" +
             "•  Closing the window keeps the app in the notification area. Right-click the tray icon to copy a code or to exit.\r\n\r\n" +

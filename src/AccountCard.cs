@@ -5,10 +5,15 @@ using System.Windows.Forms;
 
 namespace Offline2FA
 {
-    /// <summary>One account in the main list. Shows the name and the current code, never the secret.</summary>
+    /// <summary>
+    /// One account in the main list. Shows the name and a masked code (all but the last digit hidden);
+    /// the full code appears for a few seconds after it is copied. The secret is never shown.
+    /// </summary>
     sealed class AccountCard : Control
     {
         enum Hot { None, Body, Copy, Remove }
+
+        const int RevealSeconds = 10;
 
         public readonly Account Account;
         public event EventHandler CopyRequested;
@@ -21,6 +26,8 @@ namespace Offline2FA
         int remaining = -1;
         Hot hot = Hot.None;
         DateTime copiedUntil = DateTime.MinValue;
+        DateTime revealUntil = DateTime.MinValue;
+        long revealedCounter = long.MinValue;
         Rectangle copyRect, removeRect;
 
         public AccountCard(Account account)
@@ -74,13 +81,28 @@ namespace Offline2FA
                 copiedUntil = DateTime.MinValue;
                 changed = true;
             }
+            // Mask again when the reveal time is over or a new code has started.
+            if (revealUntil != DateTime.MinValue && (DateTime.UtcNow > revealUntil || counter != revealedCounter))
+            {
+                revealUntil = DateTime.MinValue;
+                changed = true;
+            }
             if (changed) Invalidate();
         }
 
+        /// <summary>Called after the code was copied: shows "Copied" and reveals the full code for a few seconds.</summary>
         public void FlashCopied()
         {
             copiedUntil = DateTime.UtcNow.AddSeconds(1.5);
+            revealUntil = DateTime.UtcNow.AddSeconds(RevealSeconds);
+            revealedCounter = counter;
             Invalidate();
+        }
+
+        static string Mask(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return new string('•', value.Length - 1) + value[value.Length - 1];
         }
 
         void Raise(EventHandler handler)
@@ -143,7 +165,8 @@ namespace Offline2FA
             {
                 bool urgent = remaining <= 5;
                 Color codeColor = urgent ? Ui.Danger : Ui.Accent;
-                string shown = Totp.Format(code);
+                bool revealed = revealUntil != DateTime.MinValue;
+                string shown = Totp.Format(revealed ? code : Mask(code));
                 Size codeSize = TextRenderer.MeasureText(g, shown, Ui.CodeFont, unbounded, measure);
                 TextRenderer.DrawText(g, shown, Ui.CodeFont, new Point(pad - Ui.Px(2), codeY), codeColor, measure);
 
