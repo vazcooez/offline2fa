@@ -1,0 +1,85 @@
+name: Build and release
+
+# Builds and tests on Windows for every pull request and push.
+# A push to main whose version (src/Version.cs) has no release yet publishes
+# a GitHub Release v<version> with the .exe attached.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and run self-tests
+        shell: pwsh
+        run: ./build.ps1
+
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $m = Select-String -Path src\Version.cs -Pattern 'const string Number = "([0-9.]+)"'
+          "version=$($m.Matches[0].Groups[1].Value)" >> $env:GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Offline2FA-v${{ steps.version.outputs.version }}
+          path: release/Offline2FA-v${{ steps.version.outputs.version }}.exe
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Offline2FA-v${{ needs.build.outputs.version }}
+          path: release
+
+      - name: Publish release if this version is new
+        shell: pwsh
+        run: |
+          $tag = "v$env:VERSION"
+          gh release view $tag 2>$null | Out-Null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Release $tag already exists; nothing to publish. Bump AppVersion.Number to release."
+            exit 0
+          }
+
+          # Release notes: the Changes of this version's entry in src/Version.cs.
+          $text = Get-Content src\Version.cs -Raw -Encoding UTF8
+          $pattern = 'Version = "' + [regex]::Escape($env:VERSION) + '",\s*Date = "[^"]*",\s*Changes = new\[\]\s*\{(.*?)\}'
+          $entry = [regex]::Match($text, $pattern, 'Singleline')
+          if ($entry.Success) {
+            $lines = [regex]::Matches($entry.Groups[1].Value, '"((?:[^"\\]|\\.)*)"') |
+              ForEach-Object { '- ' + $_.Groups[1].Value.Replace('\"', '"') }
+            $notes = $lines -join "`n"
+          } else {
+            $notes = "Offline 2FA $tag"
+          }
+          Set-Content -Path notes.md -Value $notes -Encoding UTF8
+
+          gh release create $tag "release\Offline2FA-$tag.exe" --title "Offline 2FA $tag" --notes-file notes.md --target $env:GITHUB_SHA
