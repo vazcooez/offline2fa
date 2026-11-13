@@ -324,6 +324,7 @@ namespace Offline2FA
                 var card = new AccountCard(a);
                 card.CopyRequested += delegate(object s, EventArgs e) { CopyCode((AccountCard)s); };
                 card.RemoveRequested += delegate(object s, EventArgs e) { RemoveAccount((AccountCard)s); };
+                card.RenameRequested += delegate(object s, EventArgs e) { RenameAccount((AccountCard)s); };
                 card.Tick(now);
                 items.Add(card);
             }
@@ -749,6 +750,32 @@ namespace Offline2FA
                 foreach (AccountCard card in Cards())
                     if (card.Account == account) list.ScrollControlIntoView(card);
                 SetStatus("Added " + account.DisplayName + ".", true);
+            }
+        }
+
+        void RenameAccount(AccountCard card)
+        {
+            if (vault == null) return;
+            Account account = card.Account;
+            using (var form = new RenameAccountForm(account.DisplayName))
+            {
+                if (RunModal(delegate { return form.ShowDialog(this); }) != DialogResult.OK || vault == null) return;
+
+                string oldName = account.DisplayName;
+                string oldIssuer = account.Issuer, oldAccountName = account.Name;
+                if (form.NewName == oldName) return;
+                account.Issuer = "";
+                account.Name = form.NewName;
+                HistoryEntry entry = vault.Log("Account renamed", account, "Was \"" + oldName + "\"");
+                if (!TrySave())
+                {
+                    account.Issuer = oldIssuer;
+                    account.Name = oldAccountName;
+                    vault.Data.History.Remove(entry);
+                    return;
+                }
+                Rebuild();
+                SetStatus("Renamed " + oldName + " to " + account.DisplayName + ".", true);
             }
         }
 

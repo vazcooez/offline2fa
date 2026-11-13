@@ -18,6 +18,7 @@ namespace Offline2FA
         public readonly Account Account;
         public event EventHandler CopyRequested;
         public event EventHandler RemoveRequested;
+        public event EventHandler RenameRequested;
 
         readonly byte[] key;
         readonly ContextMenuStrip menu;
@@ -46,6 +47,7 @@ namespace Offline2FA
 
             menu = new ContextMenuStrip { Font = Ui.BaseFont };
             menu.Items.Add("Copy code", null, delegate { Raise(CopyRequested); });
+            menu.Items.Add("Rename…", null, delegate { Raise(RenameRequested); });
             menu.Items.Add("Remove from list…", null, delegate { Raise(RemoveRequested); });
             ContextMenuStrip = menu;
         }

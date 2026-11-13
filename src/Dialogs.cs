@@ -751,6 +751,40 @@ namespace Offline2FA
         }
     }
 
+    sealed class RenameAccountForm : DialogBase
+    {
+        readonly TextBox name;
+
+        public string NewName { get; private set; }
+
+        public RenameAccountForm(string currentName) : base("Rename account", 380)
+        {
+            AddHeading("Rename account");
+            name = AddField("Name", Ui.MakeTextBox(false));
+            name.Text = currentName;
+            AddError();
+
+            Button cancel;
+            Button save = AddButtons("Save", "Cancel", out cancel);
+            AcceptButton = save;
+            save.Click += delegate { Submit(); };
+            Shown += delegate { name.Focus(); name.SelectAll(); };
+        }
+
+        void Submit()
+        {
+            string text = name.Text.Trim();
+            if (text.Length == 0)
+            {
+                SetError("Enter a name.");
+                name.Focus();
+                return;
+            }
+            NewName = text;
+            DialogResult = DialogResult.OK;
+        }
+    }
+
     sealed class RemovedAccountsForm : DialogBase
     {
         readonly Vault vault;
